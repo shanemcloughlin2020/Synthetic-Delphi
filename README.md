@@ -1,169 +1,234 @@
 # Synthetic-Delphi 
-Application to set up, save, load and autonomously run 12 types of Delphi Studies using cohorts of synthetic participant personas 
+Application to set up, save, load and autonomously run 12 types of Delphi Studies using cohorts of synthetic participant personas .
 
-The local Streamlit application to run **LLM-based Delphi studies** with up to 30 participant agents and a master “researcher” (facilitator) agent.
+**Creator:** Shane McLoughlin  
+**App name:** Synthetic Delphi
 
-## Supported study templates
+**Synthetic Delphi** is a local Streamlit application for running **LLM‑mediated Delphi studies** with a configurable panel of participant agents and a master facilitator (researcher) agent. It supports multiple Delphi templates (pipelines), configurable response‑length and structure policies, audit trails, run health diagnostics, and professionally formatted downloadable reports.
 
-The application supports multiple Delphi “pipelines” (templates), each with an appropriate orchestration pattern and outputs:
 
-1. **Item-rating Delphi (consensus-building)** (`item_rating`)
-   - Optional Round 1 elicitation (or seed items)
-   - Master consolidation
-   - Structured rating rounds with controlled feedback
-   - Consensus and stability diagnostics, plus “converged vs diverged” mapping
+## What it does
 
-2. **Questionnaire Delphi (AI-Delphi style)** (`questionnaire_ai_delphi`)
-   - Open-ended questionnaire rounds
-   - Master-controlled feedback between rounds
-   - Final synthesis report
+Synthetic Delphi helps you design and execute Delphi-style studies where:
 
-3. **Forecasting** (`forecasting`)
-   - Probability elicitation per question
-   - Optional confidence-weighted aggregation
-   - Bayesian pooling (Beta) with Monte-Carlo credible intervals
+- **Participants (LLM agents)** generate responses to prompts/questions under a defined role/persona.
+- A **Master facilitator (LLM agent)** consolidates responses, provides controlled feedback, and manages iterations.
+- The system computes **quorum**, **consensus/stability** signals (template-dependent), and produces a **synthesis**.
+- You can export:
+  - a **run audit trail** (stored locally),
+  - a **consultancy-style report** (Word `.docx`, downloadable),
+  - and optional cohort configuration files for reuse.
 
-4. **Priority setting** (`priority_ranking`)
-   - Rank/order a consolidated list
-   - Borda aggregation + Kendall’s W (agreement)
-   - Stability check via top-k overlap
+---
 
-5. **Problem scoping / sensemaking** (`sensemaking`)
-   - Glossary, assumptions, boundaries, uncertainties
-   - Master consolidation and (optional) validation round
+## Key features
 
-6. **Idea generation** (`idea_generation`)
-   - Divergent idea elicitation
-   - Master clustering and consolidation
+### Study Set‑Up workspace
+- **Participants panel** (up to **30** participants)
+  - per‑participant role/persona, model selection, and optional per‑participant API key
+  - **global API key** option (recommended when using one provider/model)
+- **Master facilitator configuration**
+  - model, reasoning mode (where supported), response length policy
+- **Pipeline template selection** with template‑specific instruments and outputs
+- **Project name** and **Report title**
+  - used in cohort saves and report generation
 
-7. **Criteria / standards development** (`criteria_standards`)
-   - Elicit statements (or seed)
-   - Rate acceptability/feasibility
+### Response length and structure policies
+- Separate controls for:
+  - **Token limits** (API maximum output tokens)
+  - **Word-count policy** (expected response length)
+  - **Per-stage overrides** (different word targets per round/stage)
+- Master default policy is tuned for larger panels (default target **~2500 words**) to reduce truncation pressure in multi-participant consolidation.
 
-8. **Policy / guideline formation** (`policy_guidelines`)
-   - Elicit statements (or seed)
-   - Rate acceptability/feasibility
+### Model compatibility safeguards
+- The app dynamically adjusts requests to match model constraints (e.g., models that only support default temperature).
+- “Thinking / reasoning” controls are handled separately from response structuring:
+  - reasoning effort influences *internal deliberation* (where supported)
+  - word policy controls *presentation length and structure*
 
-9. **Risk identification & mitigation planning** (`risk_register`)
-   - Elicit risks + mitigations
-   - Rate likelihood/impact and produce a prioritized risk register
+### Execution transparency and audit trail
+- **Run & Results** provides:
+  - agent‑level health (who responded / failed / last error)
+  - stage‑level health (quorum achieved, response counts, errors)
+  - detailed audit trail of prompts, responses, and artifacts (local)
+- A structured **execution summary** is produced for each run.
 
-10. **Measurement & instrument development** (`instrument_development`)
-   - Generate items per construct
-   - Rate relevance/clarity and capture edit suggestions
+### Reports
+- Generates a **professionally structured Word report** (`.docx`) including:
+  - abstract
+  - method summary (template, rounds, panel settings)
+  - participants (roles and models)
+  - findings / synthesis
+  - agreements/disagreements (where applicable)
+  - dated cover information
+- Optional “polish” step can be enabled to perform **spell/grammar checking and layout improvements only** (no substantive rewriting). A guard rejects outputs that deviate materially from the master synthesis; the original text is preserved.
 
-11. **Scenario building** (`scenario_building`)
-   - Elicit key drivers/uncertainties
-   - Master generates scenarios
-   - Panel critiques scenarios
+---
 
-## 1) Install dependencies (no virtual environment)
+## Supported templates (pipelines)
 
-Open **Command Prompt** (cmd.exe) or **PowerShell**.
+Templates appear under **Study Set‑Up → Study Design → Pipeline template**.
 
-```bash
+### 1) Item Rating Delphi (`item_rating`)
+Consensus-building around items/dimensions.
+- optional elicitation or seeded items
+- master consolidation
+- structured rating rounds with controlled feedback
+- consensus and stability diagnostics
+
+### 2) Questionnaire Delphi / AI‑Delphi (`questionnaire_ai_delphi`)
+Open-ended multi-round questionnaire with controlled feedback and final synthesis.
+
+### 3) Forecasting (`forecasting`)
+Participants provide forecasts (and reasoning) over questions; master summarizes signals and uncertainty.
+
+### 4) Priority Ranking (`priority_ranking`)
+Participants rank/prioritize items; master computes convergence (e.g., top‑k overlap) and manages iterative refinement.
+
+### 5) Sensemaking (`sensemaking`)
+Problem scoping, issue mapping, and synthesis (useful for exploratory Delphi and research framing).
+
+### 6) Idea Generation (`idea_generation`)
+Divergent → convergent ideation with master consolidation and refinement.
+
+### 7) Policy/Guidelines (`policy_guidelines`)
+Generates structured guidelines/controls and refines via participant review.
+
+### 8) Criteria/Standards (`criteria_standards`)
+Develops evaluative criteria/standards and refines them with panel feedback.
+
+### 9) Risk Register (`risk_register`)
+Identifies, consolidates, and iteratively improves risk statements (with mitigations where configured).
+
+### 10) Instrument Development (`instrument_development`)
+Creates survey/interview items per construct; master consolidates and improves. Requires constructs as input.
+
+### 11) Scenario Building (`scenario_building`)
+Generates scenarios and iteratively refines them via participant critique and master synthesis.
+
+### 12) Recursive Reasoning (`recursive_reasoning`)
+A structured interpret → solve → converge pipeline:
+- **Round 1: pool participants’ understanding + reasoning only** (no solutions)
+- master collates interpretations and tensions
+- **Round 2: propose solutions + reasoning**
+- master collates solutions and open issues
+- **Round 3: final solution + final reasoning**
+- master produces synthesis with agreements/disagreements and convergence/divergence
+
+---
+
+## Key terms (plain-language definitions)
+
+- **Quorum fraction**: The minimum fraction of *enabled participants* that must respond for a stage to count as valid.  
+  Example: quorum fraction 0.7 with 10 participants → at least 7 responses required.
+
+- **Consensus threshold** (template-dependent): A cutoff that defines “agreement” (e.g., rating dispersion below a threshold, or % agreement above a threshold). Used to label items as converged/diverged.
+
+- **Stability threshold** (template-dependent): A cutoff indicating responses are not changing meaningfully between rounds (e.g., item ranks stabilizing, rating variance stabilizing). Used to stop early when additional rounds yield minimal movement.
+
+- **AI‑Delphi mode**: A configuration that determines how participants are prompted and how feedback is framed between rounds (e.g., independence emphasis vs. deliberative critique).
+
+- **Scope guardrails (Iconic Minds)**: Optional constraints designed to reduce hallucination or overreach in specialist panel modes. They do not change the pipeline logic; they modify instruction framing.
+
+---
+
+## Installation (Windows)
+
+### 1) Install Python (recommended)
+In **Command Prompt (Admin)**:
+
+```bat
+winget install -e --id Python.Python.3.13
+```
+
+Close and reopen Command Prompt afterwards.
+
+### 2) Install dependencies
+Navigate to the folder containing `app.py`:
+
+```bat
+cd /d C:\path\to\synthetic_delphi_app
 python -m pip install --upgrade pip
-pip install streamlit pandas pydantic requests matplotlib numpy
+python -m pip install -r requirements.txt
 ```
 
-Optional (recommended for development/testing):
+> Dependencies (from `requirements.txt`):
+> - streamlit
+> - pandas
+> - pydantic
+> - requests
+> - matplotlib
+> - numpy
+> - python-docx
 
-```bash
-pip install pytest
-```
-
-## 2) Run the app
-
-### Open in a new browser window (recommended)
-
-Use the included launcher scripts (they start the server and attempt to open a **new browser window**):
-
-- PowerShell: `Launch_Synthetic_Delphi.ps1`
-- Double-click: `Launch_Synthetic_Delphi.bat`
-
-### PowerShell
-
-```powershell
-cd C:\synthetic_delphi_app
-python -m streamlit run app.py
-```
-
-### Command Prompt (cmd.exe)
-
+### 3) Run the app
 ```bat
-cd /d C:\synthetic_delphi_app
 python -m streamlit run app.py
 ```
 
-## 3) API keys
+Or use the included launchers:
+- `Launch_Synthetic_Delphi.ps1`
+- `Launch_Synthetic_Delphi.bat`
 
-- The UI uses a **common API key** by default (Step 1). Each participant is still treated as a **separate agent with separate calls and task tracking**.
-- You may also set an environment variable:
+---
 
-### PowerShell
+## Using the app (quick start)
 
-```powershell
-setx OPENAI_API_KEY "YOUR_KEY_HERE"
-```
+1. **Study Set‑Up → Participants**
+   - Add participants (up to 30)
+   - Set a **Global API key** if using one provider/model
+2. **Study Set‑Up → Study Design**
+   - Choose a template
+   - Configure response length policies (global and per-stage)
+   - Set project name and report title
+3. **Study Set‑Up → Instruments**
+   - Provide template inputs (e.g., questionnaire questions, constructs)
+4. **Run & Results**
+   - Click **Run study now**
+   - Review health diagnostics and artifacts
+   - Download the **Word report (.docx)**
 
-Open a **new** terminal after setting it.
+---
 
-### Command Prompt
+## Data storage and privacy
 
-```bat
-setx OPENAI_API_KEY "YOUR_KEY_HERE"
-```
+- All runs and artifacts are stored locally in a **SQLite** database.
+- Cohort files (save/load) store study configuration and optionally API keys.
+- If you select **“Include API keys”** when saving, keys are stored in the cohort file in plaintext. Treat cohort files as sensitive.
 
+---
 
+## Troubleshooting
 
-## 3.5) Project manager (save/load)
+- **`streamlit` not recognized**:
+  ```bat
+  python -m streamlit run app.py
+  ```
 
-The sidebar includes a **Project** manager which can **save** and **load** a full study setup:
-- Participants (including per-agent model/provider settings)
-- Master facilitator settings
-- Study design + instruments
-- Response length/structure policies
+- **Multiple Python installs** (common on Windows):
+  ```bat
+  where python
+  python -c "import sys; print(sys.executable)"
+  ```
 
-You can choose whether to include API keys in the saved file.
-Saved files are written to the `cohorts/` folder next to `app.py`.
+- **Word report not generating**:
+  Ensure `python-docx` is installed:
+  ```bat
+  python -m pip install -U python-docx
+  ```
 
-## 4) Storage
+- **API errors (400/401/404)**:
+  Confirm:
+  - base URL (OpenAI default: `https://api.openai.com/v1`)
+  - model name is valid for your account
+  - API key is set and active
+  - temperature/reasoning controls are compatible with the selected model
 
-Runs are stored in a local SQLite database (default: `synthetic_delphi.sqlite3` in the app folder).
-You can set a different DB path in **Run & Results**.
+---
 
+## License / distribution
 
-
-## 4.5) Response length policies (separate from max_tokens)
-
-The app distinguishes between:
-- `max_tokens`: a hard upper bound at the provider level
-- **Response length policies**: word-count guidance and (optionally) strict enforcement per stage
-
-You can configure:
-- A global policy for **participants** and for the **master facilitator**
-- Optional **per-stage overrides** (participants and master can differ)
-
-This is independent of model "thinking" settings (reasoning effort), which affects internal computation rather than output structure.
-
-## 4.6) Report download
-
-In **Run & Results**, you can download a consultancy-style **RTF report** (Microsoft Word compatible) that includes an abstract, method summary, participant list, and template-specific findings.
-
-## 5) Notes on “Iconic Minds” personas
-
-If you select **Iconic Minds** mode, consider enabling scope guardrails to reduce misrepresentation risk.
-
-## 6) Troubleshooting
-
-- If `streamlit` is not recognized, run via Python:
-
-```bash
-python -m streamlit run app.py
-```
-
-- If you see API errors, confirm:
-  - base URL is correct (OpenAI default: `https://api.openai.com/v1`)
-  - model name is valid for your provider
-  - API key is set
-
+This application is provided as a local research tool. If you plan to distribute it, consider adding:
+- a software license file,
+- a data handling note for cohort files and API keys,
+- optional code signing if packaging as an executable.
