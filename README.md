@@ -1,9 +1,7 @@
-# Synthetic-Delphi
+# Synthetic-Delphi 
 Application to set up, save, load and autonomously run 12 types of Delphi Studies using cohorts of synthetic participant personas 
 
-# Synthetic Delphi (Streamlit)
-
-A local Streamlit application to run **LLM-based Delphi studies** with up to 10 participant agents and a master “researcher” (facilitator) agent.
+The local Streamlit application to run **LLM-based Delphi studies** with up to 30 participant agents and a master “researcher” (facilitator) agent.
 
 ## Supported study templates
 
