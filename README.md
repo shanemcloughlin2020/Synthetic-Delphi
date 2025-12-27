@@ -228,7 +228,4 @@ Or use the included launchers:
 
 ## License / distribution
 
-This application is provided as a local research tool. If you plan to distribute it, consider adding:
-- a software license file,
-- a data handling note for cohort files and API keys,
-- optional code signing if packaging as an executable.
+This application is provided as a local research tool. 
